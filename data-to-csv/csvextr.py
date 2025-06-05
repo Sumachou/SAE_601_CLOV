@@ -31,7 +31,7 @@ def export_all_tables_to_csv():
     """Exporte toutes les tables PostgreSQL en CSV"""
     
     # Tables à exclure
-    excluded_tables = ['wrk_tournament_seasons', 'wrk_infocards', 'wrk_player_mapping']
+    excluded_tables = ['wrk_tournament_seasons', 'wrk_infocards', 'wrk_player_mapping', 'card_evolutions', 'wrk_players']
     
     # Créer un dossier pour les exports
     export_dir = "data/csv"
