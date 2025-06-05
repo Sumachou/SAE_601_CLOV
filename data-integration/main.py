@@ -404,7 +404,7 @@ def tournament_season():
     try:
         logger.info("Début de l'ajout des saisons dans la table tournaments")
         
-        season_history = ["P-A", "A1", "A1a", "A2", "A2a", "A2b", "A3"]
+        season_history = ["P-A", "A1", "A1a", "A2", "A2a", "A2b", "A3", "A3a"]
         
         with psycopg.connect(get_connection_string()) as conn:
             with conn.cursor() as cur:
