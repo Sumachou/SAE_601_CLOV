@@ -61,7 +61,8 @@ On lance maintenant le programme qui gère toutes les étapes d'extraction :
 Le scraping des tournois se lance.
 Une fois la collection des tournois terminée, l'extraction des cartes démarre automatiquement (valider avec 'y').
 Quand toutes les informations sont récupérées, nous allons l'intégrer dans notre base PostgreSQL.
-Démarrer le serveur PostgreSQL : il s'agit de la version officielle native. Si une erreur est provoquée par la suite, vous pouvez nous contacter à cette adresse : e2201621@etud.univ-ubs.fr
+Démarrer le serveur PostgreSQL : il s'agit de la version officielle native. Si une erreur est provoquée par la suite, vous pouvez nous contacter à cette adresse : e2201621@etud.univ-ubs.fr.
+
 Le programme vous demandera de renseigner le mot de passe de la base.
 
 Les données seront alors automatiquement intégrées dans la base PostgreSQL. Pas besoin de définir des variables d'environnement, elles sont intégrées au code d'insertion.
