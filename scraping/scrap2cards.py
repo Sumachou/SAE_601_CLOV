@@ -30,28 +30,53 @@ def extract_urls_from_json_files(directory_path):
     
     return sorted(list(all_urls))
 
-def get_evolves_from_url(soup, session):
+def get_all_evolves_from_urls(soup, session):
+    """
+    Récupère TOUS les liens vers les cartes qui évoluent en ce Pokémon
+    """
     type_elem = soup.find('p', class_='card-text-type')
     if not type_elem:
-        return None
+        return []
     
-    if 'Evolves from' in type_elem.get_text():
-        evolves_link = type_elem.find('a')
-        if evolves_link:
-            search_url = 'https://pocket.limitlesstcg.com' + evolves_link.get('href')
-            
-            try:
-                response = session.get(search_url, timeout=10)
-                response.raise_for_status()
-                search_soup = BeautifulSoup(response.content, 'html.parser')
-                
-                card_link = search_soup.find('a', href=re.compile(r'/cards/[^?]+$'))
-                if card_link:
-                    return 'https://pocket.limitlesstcg.com' + card_link.get('href')
-            except:
-                pass
+    if 'Evolves from' not in type_elem.get_text():
+        return []
     
-    return None
+    evolves_link = type_elem.find('a')
+    if not evolves_link:
+        return []
+    
+    search_url = 'https://pocket.limitlesstcg.com' + evolves_link.get('href')
+    
+    try:
+        response = session.get(search_url, timeout=10)
+        response.raise_for_status()
+        search_soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # Trouver tous les liens vers les cartes dans la grille de recherche
+        card_links = []
+        
+        # Chercher dans la grille de cartes
+        card_grid = search_soup.find('div', class_='card-search-grid')
+        if card_grid:
+            # Trouver tous les liens vers les cartes (qui se terminent par un numéro, pas par des paramètres)
+            links = card_grid.find_all('a', href=re.compile(r'/cards/[^?]+$'))
+            for link in links:
+                full_url = 'https://pocket.limitlesstcg.com' + link.get('href')
+                card_links.append(full_url)
+        
+        # Si aucune carte trouvée dans la grille, essayer l'ancienne méthode
+        if not card_links:
+            card_link = search_soup.find('a', href=re.compile(r'/cards/[^?]+$'))
+            if card_link:
+                full_url = 'https://pocket.limitlesstcg.com' + card_link.get('href')
+                card_links.append(full_url)
+        
+        print(f"    Trouvé {len(card_links)} cartes qui évoluent vers cette carte")
+        return card_links
+        
+    except Exception as e:
+        print(f"    Erreur lors de la récupération des cartes d'évolution: {e}")
+        return []
 
 def scrape_card_info(url, session):
     try:
@@ -67,7 +92,7 @@ def scrape_card_info(url, session):
             'sous_type': None,
             'hp': None,
             'evolving_stage': None,
-            'evolves_from': None,
+            'evolves_from': [],  # Maintenant c'est une liste
             'competence_1_nom': None,
             'competence_1_puissance': None,
             'competence_2_nom': None,
@@ -102,7 +127,8 @@ def scrape_card_info(url, session):
                 elif 'Stage 2' in type_text:
                     card_info['evolving_stage'] = 'Stage 2'
                 
-                card_info['evolves_from'] = get_evolves_from_url(soup, session)
+                # Récupérer TOUS les liens d'évolution
+                card_info['evolves_from'] = get_all_evolves_from_urls(soup, session)
         
         if card_info['type_carte'] == 'Pokémon':
             page_text = soup.get_text()
@@ -186,7 +212,8 @@ def scrape_all_cards(urls, delay=1):
         
         if card_info:
             cards_data.append(card_info)
-            print(f"  Succès: {card_info['nom']} ({card_info['type_carte']})")
+            evolves_count = len(card_info['evolves_from']) if card_info['evolves_from'] else 0
+            print(f"  Succès: {card_info['nom']} ({card_info['type_carte']}) - {evolves_count} évolutions trouvées")
         else:
             failed_urls.append(url)
             print(f"  Échec")
@@ -219,11 +246,12 @@ def save_results(cards_data, failed_urls, output_dir="data/output_added"):
                 'sous_type': card['sous_type'],
                 'hp': int(card['hp']) if card['hp'] is not None else None,
                 'evolving_stage': card['evolving_stage'],
-                'evolves_from': card['evolves_from'],
+                'evolves_from': '|'.join(card['evolves_from']) if card['evolves_from'] else '',  # Joindre les URLs avec |
+                'evolves_from_count': len(card['evolves_from']) if card['evolves_from'] else 0,  # Ajouter le nombre
                 'competence_1_nom': card['competence_1_nom'],
-                'competence_1_puissance': card['competence_1_puissance'],  # Gardé comme string
+                'competence_1_puissance': card['competence_1_puissance'],
                 'competence_2_nom': card['competence_2_nom'],
-                'competence_2_puissance': card['competence_2_puissance'],  # Gardé comme string
+                'competence_2_puissance': card['competence_2_puissance'],
                 'faiblesse': card['faiblesse'],
                 'retreat': int(card['retreat']) if card['retreat'] is not None else None
             }
@@ -246,8 +274,11 @@ def save_results(cards_data, failed_urls, output_dir="data/output_added"):
     if cards_data:
         trainers = sum(1 for card in cards_data if card['type_carte'] == 'Trainer')
         pokemon = sum(1 for card in cards_data if card['type_carte'] == 'Pokémon')
+        evolution_cards = sum(1 for card in cards_data if card['evolves_from'])
+        
         print(f"   Cartes Trainer: {trainers}")
         print(f"   Cartes Pokémon: {pokemon}")
+        print(f"   Cartes avec évolutions: {evolution_cards}")
         print(f"   Autres: {len(cards_data) - trainers - pokemon}")
 
 def main():
