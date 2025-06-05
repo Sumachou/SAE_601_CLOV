@@ -13,7 +13,7 @@ Next, we need to move to the project directory (for example, if it's located at 
 Download pip and the Python libraries: 
 
 > conda install pip (confirm with 'y')
-> pip install pandas aiohttp aiofile psycopg psycopg_binary requests bs4
+> pip install pandas aiohttp aiofile psycopg psycopg_binary requests bs4 matplotlib tqdm seaborn plotly ipywidgets
 
 We now run the program that manages all extraction steps:
 
@@ -52,7 +52,7 @@ Ensuite, nous devons nous déplacer dans le répertoire du projet (par exemple, 
 On télécharge pip et les bibliothèques Python : 
 
 > conda install pip (valider avec 'y')
-> pip install pandas aiohttp aiofile psycopg psycopg_binary requests bs4
+> pip install pandas aiohttp aiofile psycopg psycopg_binary requests bs4 matplotlib tqdm seaborn plotly ipywidgets
 
 On lance maintenant le programme qui gère toutes les étapes d'extraction :
 
@@ -61,8 +61,7 @@ On lance maintenant le programme qui gère toutes les étapes d'extraction :
 Le scraping des tournois se lance.
 Une fois la collection des tournois terminée, l'extraction des cartes démarre automatiquement (valider avec 'y').
 Quand toutes les informations sont récupérées, nous allons l'intégrer dans notre base PostgreSQL.
-Démarrer le serveur PostgreSQL : il s'agit de la version officielle native. Si une erreur est provoquée par la suite, vous pouvez nous contacter à cette adresse : e2201621@etud.univ-ubs.fr.
-
+Démarrer le serveur PostgreSQL : il s'agit de la version officielle native. Si une erreur est provoquée par la suite, vous pouvez nous contacter à cette adresse : e2201621@etud.univ-ubs.fr
 Le programme vous demandera de renseigner le mot de passe de la base.
 
 Les données seront alors automatiquement intégrées dans la base PostgreSQL. Pas besoin de définir des variables d'environnement, elles sont intégrées au code d'insertion.
