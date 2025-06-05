@@ -1,4 +1,4 @@
-The first objective of our project will be to extract data from the TCG Pocket site.
+The first goal of our project will be to extract data from the TCG Pocket site.
 
 To start with, we'll create a conda environment to import all Python dependencies and libraries and activate it: 
 
