@@ -22,7 +22,8 @@ We now run the program that manages all extraction steps:
 Tournament scraping begins.
 Once tournament collection is complete, card extraction starts automatically (confirm with ‘y’).
 Once all the information has been retrieved, we'll integrate it into our PostgreSQL database.
-Start the PostgreSQL server: this is the official native version. If you subsequently encounter an error, please contact us at e2201621@etud.univ-ubs.fr
+Start the PostgreSQL server: this is the official native version. If you subsequently encounter an error, please contact us at e2201621@etud.univ-ubs.fr.
+
 The program will ask you to enter the database password.
 
 The data will then be automatically integrated into the PostgreSQL database. There's no need to define environment variables - they're built into the insertion code.
